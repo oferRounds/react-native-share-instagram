@@ -190,12 +190,14 @@ RCT_EXPORT_METHOD(shareWithFacebook:(NSString *)copy andUrl:(NSString *)url
         if (success) {
             NSURL *instagramURL = [NSURL URLWithString:[NSString stringWithFormat:kInstagramLibraryURLScheme, [placeholder localIdentifier]]];
 
-            if ([[UIApplication sharedApplication] canOpenURL:instagramURL]) {
-                [[UIApplication sharedApplication] openURL:instagramURL options:@{} completionHandler:NULL];
-                if (successCallback != NULL) {
-                    successCallback(@[]);
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if ([[UIApplication sharedApplication] canOpenURL:instagramURL]) {
+                    [[UIApplication sharedApplication] openURL:instagramURL options:@{} completionHandler:NULL];
+                    if (successCallback != NULL) {
+                        successCallback(@[]);
+                    }
                 }
-            }
+            });
         }
         else {
             if (failureCallback != NULL) {
